@@ -68,7 +68,7 @@
                     </div>
                     <div class="col-xs-9 text-right">
                         <div class="huge">${requestScope.totalAvance}</div>
-                        <div><h4>Avances de los programadores</h4></div>
+                        <div><h4>Asignación de probador</h4></div>
                     </div>
                 </div>
             </div>

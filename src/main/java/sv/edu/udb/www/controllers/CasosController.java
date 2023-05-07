@@ -23,6 +23,7 @@ public class CasosController extends HttpServlet {
     EstadosModel estadosModelo = new EstadosModel();
     DepartamentoModel departamentoModelo = new DepartamentoModel();
     UsuariosModel usuarios = new UsuariosModel();
+    CasosModel casosbic = new CasosModel();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,7 +76,6 @@ public class CasosController extends HttpServlet {
                     rechazarCaso(request, response);
                     break;
 
-
                 case "gestionProgramadores":
                     gestionProgramadores(request, response);
                     break;
@@ -85,6 +85,15 @@ public class CasosController extends HttpServlet {
                 case "asignarCaso":
                     asignarCaso(request, response);
                     break;
+
+                    //PARTE DE WILMER
+                case "mostrarCasosBic":
+                    mostarCasosBic(request, response);
+                    break;
+                case "obtenerCasoBic":
+                    obtenercasoBic(request, response);
+                    break;
+
                 default:
                     request.getRequestDispatcher("/error404.jsp").forward(request, response);
                     break;
@@ -380,6 +389,41 @@ public class CasosController extends HttpServlet {
             //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    //PARTE QUE UTILIZA WILMER
+    private void mostarCasosBic(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            request.setAttribute("mostarCasosBic", casosModelo.mostrarCasosBic());
+            request.getRequestDispatcher("/bitacoras/listaCaso.jsp").forward(request,response);
+        } catch (SQLException ex) {
+            response.sendRedirect("error404.jsp");
+            ex.printStackTrace();
+        } catch (ServletException ex) {
+            response.sendRedirect("error404.jsp");
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            response.sendRedirect("error404.jsp");
+            ex.printStackTrace();
+        }
+    }
+
+    private void obtenercasoBic(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        try {
+            int codigo = Integer.parseInt(request.getParameter("id"));
+            CasosBeans casoBicBean = casosbic.obtenerCasoBic(codigo);
+            System.out.println(casosbic);
+            if(casoBicBean != null){
+                request.setAttribute("casosBic", casoBicBean);
+                request.getRequestDispatcher("/bitacoras/crearBitacora.jsp").forward(request, response);
+            }else{
+                response.sendRedirect(request.getContextPath() + "/error404.jsp");
+            }
+
+        }catch (SQLException | ServletException | IOException ex) {
+            //
+            response.sendRedirect(request.getContextPath() + "/error404.jsp");
         }
     }
 

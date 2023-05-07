@@ -41,7 +41,7 @@ public class JefeDesarrolloModel extends Conexion{
     public int totalAvance() throws SQLException{
         try {
             int totalAvance = 0;
-            String sql = "select count(id_bitacora) as total from bitacora";
+            String sql = "select count(id_bitacora) as total from bitacora where actualizar_avance = 100.00";
             this.conectar();
             st = conexion.prepareStatement(sql);
             rs = st.executeQuery();

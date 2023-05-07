@@ -129,7 +129,6 @@ public class CasosModel extends Conexion{
             st.setInt(1, casos.getId_caso());
             st.setString(2,casos.getDescripcion_caso());
             st.setString(3, casos.getArchivo_pdf());
-            st.setInt(4,casos.getIdEstado());
             filasafectadas=st.executeUpdate();
             this.desconectar();
             return filasafectadas;
@@ -327,39 +326,58 @@ public class CasosModel extends Conexion{
         }
 
     }
-    public int totalCasos()throws SQLException{
-        try{
-            int total=0;
-            String sql="Select count(id_caso) as total from casos";
+
+    //metodos que utiliza wilmer
+    public CasosBeans obtenerCasoBic(int id) throws SQLException{
+        try {
+            String sql = "SELECT id_caso, id_estado, titulo_caso, fecha_limite FROM casos WHERE id_caso = ?";
+            this.conectar();
+            st = conexion.prepareStatement(sql);
+            st.setInt(1, id);
+            rs = st.executeQuery();
+            if(rs.next()){
+                CasosBeans casosbi = new CasosBeans();
+                casosbi.setTitulo_caso(rs.getString("titulo_caso"));
+                casosbi.setId_caso(Integer.parseInt(rs.getString("id_caso")));
+                casosbi.setIdEstado(Integer.parseInt(rs.getString("id_estado")));
+                casosbi.setFecha_limite(rs.getString("fecha_limite"));
+                this.desconectar();
+                return casosbi;
+            }
+            this.desconectar();
+            return null;
+        }catch (SQLException ex) {
+            this.desconectar();
+            return null;
+        }
+    }
+    /**************************metodos para la parte de bitacora**************************************************/
+    public List<CasosBeans> mostrarCasosBic() throws SQLException{
+        try {
+            List<CasosBeans> lista = new ArrayList<>();
+            String sql = "SELECT casos.id_caso, casos.descripcion_caso, estado.estado, casos.titulo_caso, casos.fecha_limite\n" +
+                    "FROM casos\n" +
+                    "INNER JOIN estado ON casos.id_estado = estado.id_estado\n" +
+                    "WHERE estado.id_estado = 7\n" +
+                    "ORDER BY casos.id_caso ASC;\n";
+
             this.conectar();
             st = conexion.prepareStatement(sql);
             rs = st.executeQuery();
-            while(rs.next()){
-                total = rs.getInt("total");
+            while (rs.next()){
+                CasosBeans casos = new CasosBeans();
+                casos.setId_caso(Integer.parseInt(rs.getString("id_caso")));
+                casos.setDescripcion_caso(rs.getString("descripcion_caso"));
+                casos.setId_estado(rs.getString("estado"));
+                casos.setTitulo_caso(rs.getString("titulo_caso"));
+                casos.setFecha_limite(rs.getString("fecha_limite"));
+                lista.add(casos);
             }
             this.desconectar();
-            return total;
+            return lista;
         }catch (SQLException ex) {
             this.desconectar();
-            return 0;
+            return  null;
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

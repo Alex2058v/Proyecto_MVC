@@ -24,7 +24,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="${pageContext.request.contextPath}/casos.do?op=mostarCasos">Gestion de casos</a></li>
                         <li><a href="${pageContext.request.contextPath}/casos.do?op=gestionProgramadores">Gestion de programadores</a></li>
-                        <li><a href="${pageContext.request.contextPath}/#">Ver avances de programadores</a></li>
+                        <li><a href="${pageContext.request.contextPath}/casos.do?op=">Asignar probador</a></li>
                     </ul>
                 </li>
             </ul>
