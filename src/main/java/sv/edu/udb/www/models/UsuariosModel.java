@@ -11,7 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UsuariosModel extends Conexion{
-    public List<UsuariosBeans> mostrarUsuarios() throws SQLException{
+    //Para la parte de gestión de un programador
+    public List<UsuariosBeans> mostrarProgramadores() throws SQLException{
         try {
             List<UsuariosBeans> lista = new ArrayList<>();
             String sql = "SELECT id_usuario, CONCAT(nombres, ' ', apellidos) as nombre_completo FROM usuarios WHERE id_tipousuario = 4";
@@ -32,7 +33,28 @@ public class UsuariosModel extends Conexion{
             return null;
         }
     }
+    //Gestión de parte del probador
+    public List<UsuariosBeans> mostrarProbadores() throws SQLException{
+        try {
+            List<UsuariosBeans> lista = new ArrayList<>();
+            String sql = "SELECT id_usuario, CONCAT(nombres, ' ', apellidos) as nombre_completo FROM usuarios WHERE id_tipousuario = 5";
+            this.conectar();
+            st = conexion.prepareStatement(sql);
+            rs = st.executeQuery();
 
+            while (rs.next()){
+                UsuariosBeans linea = new UsuariosBeans();
+                linea.setId_usuario(rs.getInt("id_usuario"));
+                linea.setNombres(rs.getString("nombre_completo"));
+                lista.add(linea);
+            }
+            this.desconectar();
+            return lista;
+        }catch (SQLException ex) {
+            this.desconectar();
+            return null;
+        }
+    }
 
     //Validacion para Login
     public UsuariosBeans validarUsuario(String usuario, String contrasenia) throws SQLException {

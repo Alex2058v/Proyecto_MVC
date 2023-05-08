@@ -27,6 +27,7 @@
                 <th>ID del caso</th>
                 <th>Título del caso</th>
                 <th>Departamento</th>
+                <th>Acción</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,13 @@
                     <td>${casos.id_caso}</td>
                     <td>${casos.titulo_caso}</td>
                     <td>${casos.id_departamento}</td>
+
+                    <td>
+                        <a title="aprobar" class="btn btn-info"
+                            href="${contextPath}/casos.do?op=obtenerCasoProbador&id=${casos.id_caso}">
+                            <span>Dar caso a un probador</span>
+                        </a>
+                    </td>
                 </tr>
             </c:forEach>
         </tbody>

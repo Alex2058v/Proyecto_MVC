@@ -343,7 +343,7 @@ public class CasosModel extends Conexion{
                 CasosBeans caso = new CasosBeans();
                 caso.setId_caso(Integer.parseInt(rs.getString("id_caso")));
                 caso.setTitulo_caso(rs.getString("titulo_caso"));
-                caso.setId_estado(rs.getString("departamento"));
+                caso.setId_departamento(rs.getString("departamento"));
                 lista.add(caso);
             }
             this.desconectar();
@@ -351,6 +351,51 @@ public class CasosModel extends Conexion{
         }catch (SQLException ex) {
             this.desconectar();
             return  null;
+        }
+    }
+
+    public CasosBeans probadorObtener(int id) throws SQLException{
+        try {
+            String sql = "SELECT c.id_caso, c.titulo_caso, c.fecha_solicitud, c.id_estado, d.departamento \n" +
+                        "FROM casos c \n" +
+                        "JOIN departamento d ON c.id_departamento = d.id_departamento \n" +
+                        "WHERE c.id_caso = ?";
+            this.conectar();
+            st = conexion.prepareStatement(sql);
+            st.setInt(1, id);
+            rs = st.executeQuery();
+
+            if(rs.next()) {
+                CasosBeans casos = new CasosBeans();
+                casos.setId_caso(Integer.parseInt(rs.getString("id_caso")));
+                casos.setTitulo_caso(rs.getString("titulo_caso"));
+                casos.setId_departamento(rs.getString("departamento"));
+                casos.setIdEstado(Integer.parseInt(rs.getString("id_estado")));
+                this.desconectar();
+                return casos;
+            }
+            this.desconectar();
+            return null;
+        }catch (SQLException ex) {
+            this.desconectar();
+            return  null;
+        }
+    }
+
+    public int casoProbadorAsignado(CasosBeans casos) throws SQLException{
+        try {
+            int filasAfectadas = 0;
+            String sql = "UPDATE casos SET id_probador = ? ,id_estado = 8 WHERE id_caso = ?";
+            this.conectar();
+            st = conexion.prepareStatement(sql);
+            st.setInt(1, casos.getIdProbador());
+            st.setInt(2, casos.getId_caso());
+            filasAfectadas = st.executeUpdate();
+            this.desconectar();
+            return filasAfectadas;
+        }catch (SQLException ex) {
+            this.desconectar();
+            return 0;
         }
     }
 

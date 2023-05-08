@@ -89,8 +89,14 @@ public class CasosController extends HttpServlet {
                 case "gestionProbador":
                     casosProbador(request, response);
                     break;
+                case "obtenerCasoProbador":
+                    obtenerProbador(request, response);
+                    break;
+                case "asignarCasoProbador":
+                    asignarProbador(request, response);
+                    break;
 
-                    //PARTE DE WILMER
+                    //parte de wilmer
                 case "mostrarCasosBic":
                     mostarCasosBic(request, response);
                     break;
@@ -312,10 +318,10 @@ public class CasosController extends HttpServlet {
 
                 if (casosModelo.aprobarCaso(caso) > 0){
                     request.getSession().setAttribute("éxito", "El caso se ha aprobado con éxito.");
-                    response.sendRedirect(request.getContextPath() +"/CasosController.do?op=mostarCasos");
+                    response.sendRedirect(request.getContextPath() +"/casos.do?op=mostarCasos");
                 }else {
                     request.getSession().setAttribute("fracaso", "El caso no se pudo aprobar");
-                    response.sendRedirect(request.getContextPath() + "/CasosController.do?op=mostarCasos");
+                    response.sendRedirect(request.getContextPath() + "/casos.do?op=mostarCasos");
                 }
             }catch (IOException ex) {
                 //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
@@ -374,7 +380,7 @@ public class CasosController extends HttpServlet {
             CasosBeans casosBean = casosModelo.casoObtener(codigo);
             if(casosBean != null){
                 request.setAttribute("casoObtener", casosBean);
-                request.setAttribute("listaProgramadores", usuarios.mostrarUsuarios());
+                request.setAttribute("listaProgramadores", usuarios.mostrarProgramadores());
                 request.getRequestDispatcher("/jefeDesarrollo/asignarProgramador.jsp").forward(request, response);
             }else{
                 response.sendRedirect(request.getContextPath() + "/error404.jsp");
@@ -392,11 +398,10 @@ public class CasosController extends HttpServlet {
             caso.setFecha_solicitud(request.getParameter("fechaSolicitud"));
             caso.setFecha_limite(request.getParameter("fechaLimite"));
             if (casosModelo.casoAsignado(caso) > 0){
-                request.getSession().setAttribute("éxito", "El caso se ha aprobado con éxito.");
-                response.sendRedirect(request.getContextPath() +"/CasosController.do?op=gestionProgramadores");
+                response.sendRedirect(request.getContextPath() +"/casos.do?op=gestionProgramadores");
             }else {
                 request.getSession().setAttribute("fracaso", "El caso no se pudo aprobar");
-                response.sendRedirect(request.getContextPath() + "/CasosController.do?op=gestionProgramadores");
+                response.sendRedirect(request.getContextPath() + "/casos.do?op=gestionProgramadores");
             }
         }catch (IOException ex) {
             //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
@@ -405,6 +410,7 @@ public class CasosController extends HttpServlet {
         }
     }
 
+    //Parte donde solo se muestra la parte para el probador
     private void casosProbador(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             request.setAttribute("mostrarCasos", casosModelo.mostrarCasoProbador());
@@ -415,6 +421,42 @@ public class CasosController extends HttpServlet {
             Logger.getLogger(BitacoraController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(BitacoraController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void obtenerProbador(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            int codigo = Integer.parseInt(request.getParameter("id"));
+            CasosBeans caso = casosModelo.probadorObtener(codigo);
+            if(caso != null) {
+                request.setAttribute("casoObtener", caso);
+                request.setAttribute("listrarProbadores", usuarios.mostrarProbadores());
+                request.getRequestDispatcher("/jefeDesarrollo/asignarProbadorCaso.jsp").forward(request, response);
+            }else {
+                response.sendRedirect(request.getContextPath() + "/error404.jsp");
+            }
+        }catch (SQLException | ServletException | IOException ex) {
+            response.sendRedirect(request.getContextPath() + "/error404.jsp");
+        }
+    }
+
+    private void asignarProbador(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int estado = Integer.parseInt(request.getParameter("idEstado"));
+        if(estado != 6){
+            response.sendRedirect(request.getContextPath() + "/error404.jsp");
+        }else{
+            try {
+                CasosBeans caso = new CasosBeans();
+                caso.setId_caso(Integer.parseInt(request.getParameter("idCaso")));
+                caso.setIdProbador(Integer.parseInt(request.getParameter("probador")));
+                if (casosModelo.casoProbadorAsignado(caso) > 0){
+                    response.sendRedirect(request.getContextPath() +"/casos.do?op=gestionProbador");
+                }else{
+                    response.sendRedirect(request.getContextPath() +"/casos.do?op=gestionProbador");
+                }
+            }catch (SQLException ex) {
+                System.out.println(ex);
+            }
         }
     }
 
