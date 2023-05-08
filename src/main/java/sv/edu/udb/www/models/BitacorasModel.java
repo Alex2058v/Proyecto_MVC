@@ -41,26 +41,18 @@ public class BitacorasModel extends Conexion{
 
     public BitacorasBeans obtenerBitacora(int id) throws SQLException{
         try {
-            String sql = "SELECT b.id_bitacora, b.fecha_limite, b.modificaciones, b.actualizar_avance, b.caso_id, c.id_estado \n" +
-                            "FROM bitacora b \n" +
-                            "JOIN casos c ON b.caso_id = c.id_caso\n" +
-                            "WHERE b.id_bitacora = ?";
-
-            //String sql = "SELECT * FROM bitacora WHERE id_bitacora = ?";
+            String sql = "SELECT * FROM bitacora WHERE id_bitacora = ?";
             this.conectar();
             st = conexion.prepareCall(sql);
             st.setInt(1, id);
             rs = st.executeQuery();
             if(rs.next()){
                 BitacorasBeans bitacora = new BitacorasBeans();
-                CasosBeans caso = new CasosBeans();
-
                 bitacora.setId_bitacora(Integer.parseInt(rs.getString("id_bitacora")));
                 bitacora.setFecha_limite(rs.getString("fecha_limite"));
                 bitacora.setModificaciones(rs.getString("modificaciones"));
                 bitacora.setAvance(rs.getString("actualizar_avance"));
                 bitacora.setId_caso(Integer.parseInt(rs.getString("caso_id")));
-                caso.setId_caso(Integer.parseInt("id_estado"));
                 this.desconectar();
                 return bitacora;
             }

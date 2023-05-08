@@ -24,6 +24,11 @@
             </div>
         </div>
 
+        <!--Código del estado que me servira para validar-->
+        <div class="input-group">
+            <input readonly type="hidden" class="form-control" name="idEstado"  id="idEstado" value="${casos.idEstado}" placeholder="Código del caso." >
+        </div>
+
         <div class="form-group">
             <label for="idDescipcion">Descripción del caso</label>
             <div class="input-group">

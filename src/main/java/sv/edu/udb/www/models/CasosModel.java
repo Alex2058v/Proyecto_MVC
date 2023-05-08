@@ -196,7 +196,7 @@ public class CasosModel extends Conexion{
 
     public CasosBeans obtenerCaso(int id) throws SQLException{
         try {
-            String sql = "SELECT id_caso, descripcion_caso, archivo_pdf FROM casos WHERE id_caso = ?";
+            String sql = "SELECT id_caso, id_estado, descripcion_caso, archivo_pdf FROM casos WHERE id_caso = ?";
             this.conectar();
             st = conexion.prepareStatement(sql);
             st.setInt(1, id);
@@ -204,6 +204,7 @@ public class CasosModel extends Conexion{
             if(rs.next()){
                 CasosBeans casos = new CasosBeans();
                 casos.setId_caso(Integer.parseInt(rs.getString("id_caso")));
+                casos.setIdEstado(Integer.parseInt(rs.getString("id_estado")));
                 casos.setArchivo_pdf(rs.getString("archivo_pdf"));
                 casos.setDescripcion_caso(rs.getString("descripcion_caso"));
                 this.desconectar();
@@ -326,6 +327,33 @@ public class CasosModel extends Conexion{
         }
 
     }
+
+    //parte donde se hace gestión de casos con los probadores
+    public List<CasosBeans> mostrarCasoProbador() throws SQLException{
+        try {
+            List<CasosBeans> lista = new ArrayList<>();
+            String sql = "SELECT c.id_caso, c.titulo_caso, d.departamento \n" +
+                            "FROM casos c \n" +
+                            "INNER JOIN departamento d ON c.id_departamento = d.id_departamento \n" +
+                            "WHERE c.id_estado = 6";
+            this.conectar();
+            st = conexion.prepareStatement(sql);
+            rs = st.executeQuery();
+            while (rs.next()) {
+                CasosBeans caso = new CasosBeans();
+                caso.setId_caso(Integer.parseInt(rs.getString("id_caso")));
+                caso.setTitulo_caso(rs.getString("titulo_caso"));
+                caso.setId_estado(rs.getString("departamento"));
+                lista.add(caso);
+            }
+            this.desconectar();
+            return lista;
+        }catch (SQLException ex) {
+            this.desconectar();
+            return  null;
+        }
+    }
+
 
     //metodos que utiliza wilmer
     public CasosBeans obtenerCasoBic(int id) throws SQLException{

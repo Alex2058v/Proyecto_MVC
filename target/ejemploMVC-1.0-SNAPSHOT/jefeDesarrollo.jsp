@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </div>
-            <a href="${pageContext.request.contextPath}/#">
+            <a href="${pageContext.request.contextPath}/casos.do?op=gestionProbador">
                 <div class="panel-footer">
                     <span class="pull-left">Ver avances</span>
                     <span class="pull-right"><i class="glyphicon glyphicon-arrow-right"></i></span>

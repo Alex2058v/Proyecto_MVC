@@ -105,7 +105,6 @@ public class BitacoraController extends HttpServlet{
             System.out.println(bitacorasModelo);
             if(bitacoraBean != null){
                 request.setAttribute("bitacora", bitacoraBean);
-                request.setAttribute("casosBic", caso);
                 request.getRequestDispatcher("/bitacoras/editarBitacora.jsp").forward(request, response);
             }else{
                 response.sendRedirect(request.getContextPath() + "/error404.jsp");
@@ -118,36 +117,31 @@ public class BitacoraController extends HttpServlet{
     }
 
     private void updateBitacora(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int estado = Integer.parseInt(request.getParameter("idEstado"));
-        if (estado != 7){
-            response.sendRedirect(request.getContextPath() + "/error404.jsp");
-        }else {
-            try {
-                BitacorasBeans bitacora = new BitacorasBeans();
-                bitacora.setId_bitacora(Integer.parseInt(request.getParameter("idBic")));
-                bitacora.setFecha_limite(request.getParameter("FechaBic"));
-                bitacora.setId_caso(Integer.parseInt(request.getParameter("casoBic")));
-                bitacora.setModificaciones(request.getParameter("modifiBic"));
-                bitacora.setAvance(request.getParameter("avanceBic"));
+        try {
+            BitacorasBeans bitacora = new BitacorasBeans();
+            bitacora.setId_bitacora(Integer.parseInt(request.getParameter("idBic")));
+            bitacora.setFecha_limite(request.getParameter("FechaBic"));
+            bitacora.setId_caso(Integer.parseInt(request.getParameter("casoBic")));
+            bitacora.setModificaciones(request.getParameter("modifiBic"));
+            bitacora.setAvance(request.getParameter("avanceBic"));
 
-                System.out.println(bitacora);
+            System.out.println(bitacora);
 
-                if (bitacorasModelo.modificarBitacora(bitacora) > 0) {
-                    if (bitacora.getAvance().equals("100")) {
-                        System.out.println("La bitacora se ha creado con éxito y el avance ha llegado al 100%.");
-                    } else {
-                        request.getSession().setAttribute("mensaje", "La bitacora se ha creado con éxito.");
-                    }
-                    response.sendRedirect(request.getContextPath() + "/bitacoras.do?op=listar");
+            if (bitacorasModelo.modificarBitacora(bitacora) > 0) {
+                if (bitacora.getAvance().equals("100")) {
+                    System.out.println("La bitacora se ha creado con éxito y el avance ha llegado al 100%.");
                 } else {
-                    request.getSession().setAttribute("fracaso", "La bitacora no se pudo crear");
-                    response.sendRedirect(request.getContextPath() + "/bitacoras.do?op=listar");
+                    request.getSession().setAttribute("mensaje", "La bitacora se ha creado con éxito.");
                 }
-            } catch (IOException ex) {
-                //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
-                //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
+                response.sendRedirect(request.getContextPath() + "/bitacoras.do?op=listar");
+            } else {
+                request.getSession().setAttribute("fracaso", "La bitacora no se pudo crear");
+                response.sendRedirect(request.getContextPath() + "/bitacoras.do?op=listar");
             }
+        } catch (IOException ex) {
+            //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            //Logger.getLogger(LibrosController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
